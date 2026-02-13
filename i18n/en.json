@@ -1,0 +1,63 @@
+{
+  "brand": {
+    "name": "Brilliant Creative Florist",
+    "tagline": "Premium floral design showcase • Sibu, Sarawak"
+  },
+  "nav": {
+    "contact": "Contact",
+    "backToGallery": "Back to gallery"
+  },
+  "hero": {
+    "title": "A high-end floral gallery",
+    "desc": "Browse our signature arrangements. Tap any image to view details. Order instantly via WhatsApp.",
+    "cardLabel": "Featured",
+    "badge": "Noir Collection",
+    "cardTitle": "Signature arrangements",
+    "cardNote": "Tap any piece below to open in full."
+  },
+  "meta": {
+    "updated": "Updated regularly",
+    "quality": "Premium finishing & packaging",
+    "description": "High-end floral design showcase. Scan to view gallery and order via WhatsApp."
+  },
+  "cta": {
+    "whatsapp": "WhatsApp Order",
+    "copyLink": "Copy site link",
+    "copyWA": "Copy WhatsApp link"
+  },
+  "filter": {
+    "all": "All",
+    "valentine": "Valentine",
+    "opening": "Grand Opening",
+    "birthday": "Birthday",
+    "proposal": "Proposal"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "5 per row on desktop • Optimized for mobile",
+    "emptyTitle": "No items",
+    "emptyDesc": "Try another category."
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Fast reply • Custom requests welcome",
+    "addressLabel": "Address",
+    "hoursLabel": "Hours",
+    "whatsLabel": "WhatsApp",
+    "qrTitle": "Scan to WhatsApp",
+    "qrSub": "Best for desktop users",
+    "qrNote": "Or click the button to open WhatsApp."
+  },
+  "footer": {
+    "note": "High-end floral design showcase • Powered by GitHub Pages"
+  },
+  "toast": {
+    "copiedLink": "Site link copied",
+    "copiedWA": "WhatsApp link copied",
+    "langSwitched": "Language switched",
+    "imageMissing": "Image file missing. Check /assets/gallery/"
+  },
+  "lightbox": {
+    "tipSwipe": "Swipe left/right on mobile"
+  }
+}

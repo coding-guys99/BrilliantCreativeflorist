@@ -1,0 +1,17 @@
+:root{
+  --container: 1160px;
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+  /* Korean premium light */
+  --bg1: #fbfaf7;
+  --bg2: #ffffff;
+
+  --text: rgba(0,0,0,.86);
+  --muted: rgba(0,0,0,.56);
+
+  --line: rgba(0,0,0,.08);
+  --panel: rgba(255,255,255,.90);
+
+  --gold: #c7a046;   /* warm */
+  --sage: #9cb7aa;   /* soft */
+}

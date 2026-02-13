@@ -1,0 +1,63 @@
+{
+  "brand": {
+    "name": "Brilliant Creative Florist",
+    "tagline": "高端花艺作品展示 • 诗巫 Sibu, Sarawak"
+  },
+  "nav": {
+    "contact": "联系我们",
+    "backToGallery": "返回作品集"
+  },
+  "hero": {
+    "title": "高端花艺作品集",
+    "desc": "滑动浏览作品，点击任一图片即可放大查看细节。想询价/预订，直接 WhatsApp 快速联系。",
+    "cardLabel": "精选",
+    "badge": "Noir Collection",
+    "cardTitle": "Signature Arrangements",
+    "cardNote": "点击任一作品可放大查看。"
+  },
+  "meta": {
+    "updated": "不定期更新",
+    "quality": "精品包装・细节到位",
+    "description": "高端花艺作品展示。扫码即可查看作品集并通过 WhatsApp 预订。"
+  },
+  "cta": {
+    "whatsapp": "WhatsApp 预订",
+    "copyLink": "复制网站链接",
+    "copyWA": "复制 WhatsApp 链接"
+  },
+  "filter": {
+    "all": "全部",
+    "valentine": "情人节",
+    "opening": "开业花篮",
+    "birthday": "生日",
+    "proposal": "求婚"
+  },
+  "gallery": {
+    "title": "作品集",
+    "subtitle": "桌面一行 5 张 • 手机自适应",
+    "emptyTitle": "暂无作品",
+    "emptyDesc": "试试切换其他分类。"
+  },
+  "contact": {
+    "title": "联系方式",
+    "subtitle": "回复快速 • 支持定制需求",
+    "addressLabel": "地址",
+    "hoursLabel": "营业时间",
+    "whatsLabel": "WhatsApp",
+    "qrTitle": "扫码进 WhatsApp",
+    "qrSub": "桌面用户更方便",
+    "qrNote": "也可以直接点按钮打开 WhatsApp。"
+  },
+  "footer": {
+    "note": "高端花艺作品展示 • GitHub Pages"
+  },
+  "toast": {
+    "copiedLink": "已复制网站链接",
+    "copiedWA": "已复制 WhatsApp 链接",
+    "langSwitched": "已切换语言",
+    "imageMissing": "找不到图片文件，请确认 /assets/gallery/ 内是否存在"
+  },
+  "lightbox": {
+    "tipSwipe": "手机可左右滑动切换"
+  }
+}

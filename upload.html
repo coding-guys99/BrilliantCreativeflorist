@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Upload • Brilliant Creative Florist</title>
+  <link rel="stylesheet" href="./css/tokens.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="bg-grain" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- 🔐 Simple Password Gate -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <div class="gate-title">Upload Protected</div>
+    <div class="gate-sub">請輸入管理密碼</div>
+
+    <input id="gateInput" type="password" placeholder="Password" class="gate-input" />
+    <button id="gateBtn" class="primary-btn" type="button">Enter</button>
+
+    <div id="gateMsg" class="gate-msg"></div>
+  </div>
+</div>
+
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <div class="brand-title">Brilliant Creative Florist</div>
+          <div class="brand-subtitle">Upload</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a class="ghost-link" href="./index.html">View Album →</a>
+        <button id="logoutBtn" class="ghost-btn" type="button">Logout</button>
+      </div>
+    </div>
+
+  </header>
+
+  <main class="site-main">
+    <section class="upload-section">
+      <div class="container">
+        <div class="upload-card">
+          <div class="upload-title">拖拉圖片到這裡，或點擊選擇檔案</div>
+          <div class="upload-sub">不縮放、不改長寬；只靠「格式＋品質」控制容量。每張都會顯示壓縮結果與連結。</div>
+
+          <!-- 参数面板 -->
+          <div class="param-card">
+            <div class="param-head">
+              <div class="param-title">壓縮參數</div>
+              <div class="param-hint">會自動記住（下次不用重設）</div>
+            </div>
+
+            <div class="param-grid">
+              <label class="param-field">
+                <div class="param-label">輸出格式</div>
+                <select id="optFormat" class="param-input">
+                  <option value="jpeg">JPG（推薦）</option>
+                  <option value="webp">WEBP（更省）</option>
+                  <option value="keep">保留原格式（不壓縮）</option>
+                </select>
+              </label>
+
+              <div class="param-field">
+                <div class="param-label">目標容量（MB）</div>
+                <div class="param-control">
+                  <input id="optTargetMB" class="param-number" type="number" min="0.2" max="20" step="0.1" />
+                  <input id="optTargetMBRange" class="param-range" type="range" min="0.2" max="20" step="0.1" />
+                </div>
+                <div class="param-subhint">建議 1.0～1.5MB</div>
+              </div>
+
+              <div class="param-field">
+                <div class="param-label">起始品質</div>
+                <div class="param-control">
+                  <input id="optQualityStart" class="param-number" type="number" min="0.50" max="0.95" step="0.01" />
+                  <input id="optQualityStartRange" class="param-range" type="range" min="0.50" max="0.95" step="0.01" />
+                </div>
+                <div class="param-subhint">0.82～0.88 很漂亮</div>
+              </div>
+
+              <div class="param-field">
+                <div class="param-label">最低品質</div>
+                <div class="param-control">
+                  <input id="optQualityMin" class="param-number" type="number" min="0.30" max="0.90" step="0.01" />
+                  <input id="optQualityMinRange" class="param-range" type="range" min="0.30" max="0.90" step="0.01" />
+                </div>
+                <div class="param-subhint">不建議 &lt; 0.60</div>
+              </div>
+
+              <div class="param-field">
+                <div class="param-label">降低步進（step）</div>
+                <div class="param-control">
+                  <input id="optQualityStep" class="param-number" type="number" min="0.01" max="0.10" step="0.01" />
+                  <input id="optQualityStepRange" class="param-range" type="range" min="0.01" max="0.10" step="0.01" />
+                </div>
+                <div class="param-subhint">建議 0.03～0.05</div>
+              </div>
+
+              <div class="param-field">
+                <div class="param-label">快捷</div>
+                <div class="quick-actions">
+                  <button class="chip" id="btnPresetSafe" type="button">質感穩（1.2MB/0.86）</button>
+                  <button class="chip" id="btnPresetSmall" type="button">超省（0.8MB/0.80）</button>
+                  <button class="chip" id="btnReset" type="button">重置</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropzone -->
+          <label class="upload-drop" id="dropZone">
+            <input id="fileInput" type="file" accept="image/*" multiple />
+            <div class="upload-drop-inner">
+              <div class="upload-icon">⬆︎</div>
+              <div class="upload-hint">Drop files / Click to choose</div>
+              <div class="upload-note">（此頁不需要登入，但請不要把網址公開）</div>
+            </div>
+          </label>
+
+          <div class="upload-actions">
+            <button class="primary-btn" id="btnUpload" type="button">開始上傳</button>
+            <button class="ghost-btn" id="btnClear" type="button">清空列表</button>
+          </div>
+
+          <div class="upload-list" id="list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script>
+  const GATE_KEY = "bc_upload_role_v1";
+
+  const PASSWORDS = {
+    admin: "admin2026",   // 🔥 改成你的內部密碼
+    staff: "staff2026"    // 🔥 改成員工密碼
+  };
+
+  const gate = document.getElementById("gate");
+  const input = document.getElementById("gateInput");
+  const btn = document.getElementById("gateBtn");
+  const msg = document.getElementById("gateMsg");
+
+  function unlock(role){
+    localStorage.setItem(GATE_KEY, role);
+    gate.style.display = "none";
+  }
+
+  const savedRole = localStorage.getItem(GATE_KEY);
+  if(savedRole === "admin" || savedRole === "staff"){
+    unlock(savedRole);
+  }
+
+  btn.addEventListener("click", () => {
+    const val = input.value.trim();
+
+    if(val === PASSWORDS.admin){
+      unlock("admin");
+    }else if(val === PASSWORDS.staff){
+      unlock("staff");
+    }else{
+      msg.textContent = "密碼錯誤";
+      input.value = "";
+    }
+  });
+
+  input.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") btn.click();
+  });
+</script>
+
+<script>
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn?.addEventListener("click", ()=>{
+    localStorage.removeItem("bc_upload_role_v1");
+    location.reload();
+  });
+</script>
+
+
+  <script type="module" src="./js/upload.js"></script>
+</body>
+</html>
