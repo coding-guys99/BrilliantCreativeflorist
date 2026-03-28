@@ -272,7 +272,7 @@ async function addCategory(){
 
   const exists = categories.some(cat => cat.slug === slug);
   if(exists){
-    toast("分類已存在");
+    toast("這個分類已存在");
     return;
   }
 
@@ -282,6 +282,7 @@ async function addCategory(){
     .from("categories")
     .insert({
       slug,
+      name: baseName,              // ✅ 一定要加這個
       name_zh_tw: tw || baseName,
       name_zh_cn: cn || baseName,
       name_en: en || baseName,
@@ -291,7 +292,7 @@ async function addCategory(){
 
   if(error){
     console.error(error);
-    toast("新增失敗");
+    toast("新增分類失敗");
     return;
   }
 
