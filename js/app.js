@@ -3,6 +3,9 @@ import { toast } from "./toast.js";
 import { fetchPhotos, publicUrl } from "./gallery.js";
 import { initLightbox } from "./lightbox.js";
 
+let ALL_ITEMS = [];
+let CURRENT_CATEGORY = "all";
+
 function renderGrid(gridEl, items, onOpen){
   gridEl.innerHTML = items.map((it, idx) => `
     <article class="gallery-item" data-idx="${idx}" tabindex="0" role="button" aria-label="photo">
@@ -21,6 +24,17 @@ function renderGrid(gridEl, items, onOpen){
         onOpen(items, idx);
       }
     });
+  });
+}
+
+function filterItems(category){
+  if(category === "all") return ALL_ITEMS;
+  return ALL_ITEMS.filter(item => item.category === category);
+}
+
+function setActiveCategory(categoryBar, category){
+  categoryBar.querySelectorAll(".category-chip").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.category === category);
   });
 }
 
@@ -57,12 +71,35 @@ async function main(){
   const lb = initLightbox();
   const gridEl = document.getElementById("galleryGrid");
   const emptyEl = document.getElementById("emptyState");
+  const categoryBar = document.getElementById("categoryBar");
 
   const rows = await fetchPhotos();
-  const items = rows.map(r => ({ ...r, url: publicUrl(r.file_path) }));
+  ALL_ITEMS = rows.map(r => ({
+    ...r,
+    url: publicUrl(r.file_path)
+  }));
 
-  emptyEl.classList.toggle("hidden", items.length !== 0);
-  renderGrid(gridEl, items, (arr, idx) => lb.open(arr, idx));
+  function renderCurrentCategory(){
+    const filtered = filterItems(CURRENT_CATEGORY);
+    emptyEl.classList.toggle("hidden", filtered.length !== 0);
+    renderGrid(gridEl, filtered, (arr, idx) => lb.open(arr, idx));
+
+    if(categoryBar){
+      setActiveCategory(categoryBar, CURRENT_CATEGORY);
+    }
+  }
+
+  if(categoryBar){
+    categoryBar.addEventListener("click", (e) => {
+      const btn = e.target.closest(".category-chip");
+      if(!btn) return;
+
+      CURRENT_CATEGORY = btn.dataset.category || "all";
+      renderCurrentCategory();
+    });
+  }
+
+  renderCurrentCategory();
 }
 
 main().catch(err => {
