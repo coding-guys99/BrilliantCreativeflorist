@@ -9,6 +9,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const LS_KEY = "bc_album_uploader_settings_v1";
 
 // DOM
+const optCategory = document.getElementById("optCategory");
 const fileInput = document.getElementById("fileInput");
 const dropZone = document.getElementById("dropZone");
 const listEl = document.getElementById("list");
@@ -57,6 +58,7 @@ function pct(before, after){
 function saveSettings(){
   const s = {
     format: optFormat.value,
+    category: optCategory?.value || "valentine",
     targetMB: optTargetMB.value,
     qStart: optQualityStart.value,
     qMin: optQualityMin.value,
@@ -98,12 +100,14 @@ function initSettings(){
   const saved = loadSettings();
   if(saved){
     optFormat.value = saved.format ?? "jpeg";
+    if(optCategory) optCategory.value = saved.category ?? "valentine";
     setFieldPair(optTargetMB, optTargetMBRange, saved.targetMB ?? 1.2);
     setFieldPair(optQualityStart, optQualityStartRange, saved.qStart ?? 0.86);
     setFieldPair(optQualityMin, optQualityMinRange, saved.qMin ?? 0.7);
     setFieldPair(optQualityStep, optQualityStepRange, saved.qStep ?? 0.04);
   }else{
     optFormat.value = "jpeg";
+    if(optCategory) optCategory.value = "valentine";
     setFieldPair(optTargetMB, optTargetMBRange, 1.2);
     setFieldPair(optQualityStart, optQualityStartRange, 0.86);
     setFieldPair(optQualityMin, optQualityMinRange, 0.7);
@@ -116,6 +120,7 @@ bindPair(optQualityStart, optQualityStartRange, {min:0.5, max:0.95});
 bindPair(optQualityMin, optQualityMinRange, {min:0.3, max:0.9});
 bindPair(optQualityStep, optQualityStepRange, {min:0.01, max:0.1});
 optFormat.addEventListener("change", saveSettings);
+optCategory?.addEventListener("change", saveSettings);
 
 // presets
 btnPresetSafe?.addEventListener("click", () => {
@@ -368,7 +373,8 @@ async function uploadOne(it, opts){
     .insert({
       file_path,
       is_public: true,
-      sort: Date.now()
+      sort: Date.now(),
+      category: optCategory?.value || "valentine"
     })
     .select("id")
     .single();
