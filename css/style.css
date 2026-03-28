@@ -615,3 +615,34 @@ img{ display:block; max-width:100%; }
   font-size: 12px;
   color: rgba(180,0,0,.8);
 }
+
+.category-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin: 10px 0 18px;
+}
+
+.category-chip{
+  border:none;
+  border-radius:999px;
+  padding:10px 16px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(0,0,0,.08);
+  color: rgba(0,0,0,.76);
+  cursor:pointer;
+  transition: all .18s ease;
+  box-shadow: 0 8px 22px rgba(0,0,0,.04);
+}
+
+.category-chip:hover{
+  transform: translateY(-1px);
+  border-color: rgba(199,160,70,.28);
+}
+
+.category-chip.active{
+  background: linear-gradient(180deg, rgba(199,160,70,.96), rgba(140,106,42,.96));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 12px 28px rgba(140,106,42,.18);
+}
