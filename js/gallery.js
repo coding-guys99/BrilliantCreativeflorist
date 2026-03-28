@@ -15,6 +15,18 @@ export async function fetchPhotos(){
   return data || [];
 }
 
+export async function fetchCategories(){
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, slug, name, sort")
+    .eq("is_active", true)
+    .order("sort", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if(error) throw error;
+  return data || [];
+}
+
 export function publicUrl(file_path){
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(file_path);
   return data.publicUrl;
