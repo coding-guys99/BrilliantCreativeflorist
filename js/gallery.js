@@ -11,19 +11,19 @@ export async function fetchPhotos(){
     .order("sort", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if(error) throw error;
+  if (error) throw error;
   return data || [];
 }
 
 export async function fetchCategories(){
   const { data, error } = await supabase
     .from("categories")
-    .select("id, slug, name, sort")
+    .select("id, slug, name, name_zh_tw, name_zh_cn, name_en, sort, is_active, created_at")
     .eq("is_active", true)
     .order("sort", { ascending: true })
     .order("created_at", { ascending: true });
 
-  if(error) throw error;
+  if (error) throw error;
   return data || [];
 }
 
