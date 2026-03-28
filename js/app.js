@@ -1,9 +1,10 @@
 import { i18nInit, i18nGetLang, i18nSetLang, t } from "./i18n.js";
 import { toast } from "./toast.js";
-import { fetchPhotos, publicUrl } from "./gallery.js";
+import { fetchPhotos, fetchCategories, publicUrl } from "./gallery.js";
 import { initLightbox } from "./lightbox.js";
 
 let ALL_ITEMS = [];
+let ALL_CATEGORIES = [];
 let CURRENT_CATEGORY = "all";
 
 function renderGrid(gridEl, items, onOpen){
@@ -32,10 +33,22 @@ function filterItems(category){
   return ALL_ITEMS.filter(item => item.category === category);
 }
 
-function setActiveCategory(categoryBar, category){
-  categoryBar.querySelectorAll(".category-chip").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.category === category);
-  });
+function renderCategoryBar(categoryBar){
+  if(!categoryBar) return;
+
+  const html = [
+    `<button class="category-chip ${CURRENT_CATEGORY === "all" ? "active" : ""}" data-category="all">全部</button>`,
+    ...ALL_CATEGORIES.map(cat => `
+      <button
+        class="category-chip ${CURRENT_CATEGORY === cat.slug ? "active" : ""}"
+        data-category="${cat.slug}"
+      >
+        ${cat.name}
+      </button>
+    `)
+  ].join("");
+
+  categoryBar.innerHTML = html;
 }
 
 async function main(){
@@ -73,20 +86,24 @@ async function main(){
   const emptyEl = document.getElementById("emptyState");
   const categoryBar = document.getElementById("categoryBar");
 
-  const rows = await fetchPhotos();
-  ALL_ITEMS = rows.map(r => ({
+  // 先抓分類，再抓圖片
+  const [categoriesRows, photosRows] = await Promise.all([
+    fetchCategories(),
+    fetchPhotos()
+  ]);
+
+  ALL_CATEGORIES = categoriesRows || [];
+  ALL_ITEMS = (photosRows || []).map(r => ({
     ...r,
     url: publicUrl(r.file_path)
   }));
 
   function renderCurrentCategory(){
     const filtered = filterItems(CURRENT_CATEGORY);
+
     emptyEl.classList.toggle("hidden", filtered.length !== 0);
     renderGrid(gridEl, filtered, (arr, idx) => lb.open(arr, idx));
-
-    if(categoryBar){
-      setActiveCategory(categoryBar, CURRENT_CATEGORY);
-    }
+    renderCategoryBar(categoryBar);
   }
 
   if(categoryBar){
