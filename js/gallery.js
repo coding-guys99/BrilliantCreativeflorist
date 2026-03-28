@@ -6,7 +6,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export async function fetchPhotos(){
   const { data, error } = await supabase
     .from("photos")
-    .select("file_path, sort, created_at")
+    .select("id, file_path, sort, created_at, category")
     .eq("is_public", true)
     .order("sort", { ascending: false })
     .order("created_at", { ascending: false });
