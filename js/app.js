@@ -33,17 +33,37 @@ function filterItems(category){
   return ALL_ITEMS.filter(item => item.category === category);
 }
 
+function getCategoryName(cat){
+  const lang = i18nGetLang();
+
+  if(lang === "zh-TW") return cat.name_zh_tw || cat.name || cat.slug;
+  if(lang === "zh-CN") return cat.name_zh_cn || cat.name || cat.slug;
+  if(lang === "en") return cat.name_en || cat.name || cat.slug;
+
+  return cat.name_zh_tw || cat.name || cat.slug;
+}
+
+function getAllLabel(){
+  const lang = i18nGetLang();
+
+  if(lang === "zh-TW") return "全部";
+  if(lang === "zh-CN") return "全部";
+  if(lang === "en") return "All";
+
+  return "全部";
+}
+
 function renderCategoryBar(categoryBar){
   if(!categoryBar) return;
 
   const html = [
-    `<button class="category-chip ${CURRENT_CATEGORY === "all" ? "active" : ""}" data-category="all">全部</button>`,
+    `<button class="category-chip ${CURRENT_CATEGORY === "all" ? "active" : ""}" data-category="all">${getAllLabel()}</button>`,
     ...ALL_CATEGORIES.map(cat => `
       <button
         class="category-chip ${CURRENT_CATEGORY === cat.slug ? "active" : ""}"
         data-category="${cat.slug}"
       >
-        ${cat.name}
+        ${getCategoryName(cat)}
       </button>
     `)
   ].join("");
@@ -56,30 +76,6 @@ async function main(){
   if(y) y.textContent = String(new Date().getFullYear());
 
   await i18nInit();
-
-  const langSelect = document.getElementById("langSelect");
-  if(langSelect){
-    langSelect.value = i18nGetLang();
-    langSelect.addEventListener("change", async (e) => {
-      await i18nSetLang(e.target.value);
-      applyMiniText();
-    });
-  }
-
-  function applyMiniText(){
-    const subtitle = document.getElementById("subtitleText");
-    const waText = document.getElementById("waText");
-    const emptyTitle = document.getElementById("emptyTitle");
-    const emptyDesc  = document.getElementById("emptyDesc");
-    const cap = document.getElementById("lbCaption");
-
-    if(subtitle) subtitle.textContent = t("subtitle");
-    if(waText) waText.textContent = "WhatsApp";
-    if(emptyTitle) emptyTitle.textContent = t("emptyTitle");
-    if(emptyDesc) emptyDesc.textContent = t("emptyDesc");
-    if(cap) cap.textContent = t("swipeTip");
-  }
-  applyMiniText();
 
   const lb = initLightbox();
   const gridEl = document.getElementById("galleryGrid");
@@ -104,6 +100,32 @@ async function main(){
     emptyEl.classList.toggle("hidden", filtered.length !== 0);
     renderGrid(gridEl, filtered, (arr, idx) => lb.open(arr, idx));
     renderCategoryBar(categoryBar);
+  }
+
+  function applyMiniText(){
+    const subtitle = document.getElementById("subtitleText");
+    const waText = document.getElementById("waText");
+    const emptyTitle = document.getElementById("emptyTitle");
+    const emptyDesc  = document.getElementById("emptyDesc");
+    const cap = document.getElementById("lbCaption");
+
+    if(subtitle) subtitle.textContent = t("subtitle");
+    if(waText) waText.textContent = "WhatsApp";
+    if(emptyTitle) emptyTitle.textContent = t("emptyTitle");
+    if(emptyDesc) emptyDesc.textContent = t("emptyDesc");
+    if(cap) cap.textContent = t("swipeTip");
+  }
+
+  applyMiniText();
+
+  const langSelect = document.getElementById("langSelect");
+  if(langSelect){
+    langSelect.value = i18nGetLang();
+    langSelect.addEventListener("change", async (e) => {
+      await i18nSetLang(e.target.value);
+      applyMiniText();
+      renderCurrentCategory();
+    });
   }
 
   if(categoryBar){
