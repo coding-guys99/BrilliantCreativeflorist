@@ -253,24 +253,26 @@ async function refreshCategories(){
 }
 
 async function addCategory(){
-  if(!newCategoryName) return;
+  const tw = document.getElementById("newCatTw")?.value.trim();
+  const cn = document.getElementById("newCatCn")?.value.trim();
+  const en = document.getElementById("newCatEn")?.value.trim();
 
-  const name = newCategoryName.value.trim();
-  if(!name){
-    toast("請輸入分類名稱");
+  if(!tw && !cn && !en){
+    toast("請至少填一種語言");
     return;
   }
 
-  const slug = slugify(name);
+  const baseName = tw || cn || en;
+  const slug = slugify(baseName);
+
   if(!slug){
     toast("分類名稱無效");
     return;
   }
 
-  // 檢查重複
   const exists = categories.some(cat => cat.slug === slug);
   if(exists){
-    toast("這個分類已存在");
+    toast("分類已存在");
     return;
   }
 
@@ -280,21 +282,24 @@ async function addCategory(){
     .from("categories")
     .insert({
       slug,
-      name,
+      name_zh_tw: tw || baseName,
+      name_zh_cn: cn || baseName,
+      name_en: en || baseName,
       sort: maxSort + 1,
       is_active: true
     });
 
   if(error){
     console.error(error);
-    toast("新增分類失敗");
+    toast("新增失敗");
     return;
   }
 
-  newCategoryName.value = "";
+  document.getElementById("newCatTw").value = "";
+  document.getElementById("newCatCn").value = "";
+  document.getElementById("newCatEn").value = "";
+
   await refreshCategories();
-  optCategory.value = slug;
-  saveSettings();
   toast("已新增分類");
 }
 
