@@ -699,3 +699,20 @@ img{ display:block; max-width:100%; }
   color:rgba(0,0,0,.52);
   padding:8px 0;
 }
+
+.category-manage-sub{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(0,0,0,.52);
+  line-height: 1.45;
+}
+
+.category-manage-item.editing{
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+
+.category-edit-grid{
+  display: grid;
+  gap: 8px;
+}
