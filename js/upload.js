@@ -67,6 +67,20 @@ function esc(s=""){
     .replaceAll('"',"&quot;");
 }
 
+function getCurrentLang(){
+  const saved = localStorage.getItem("album_lang_v2") || localStorage.getItem("album_lang_v1") || "zh-TW";
+  if(saved === "zh-CN" || saved === "zh-TW" || saved === "en") return saved;
+  return "zh-TW";
+}
+
+function getCategoryDisplayName(cat){
+  const lang = getCurrentLang();
+
+  if(lang === "zh-CN") return cat.name_zh_cn || cat.name_zh_tw || cat.name_en || cat.name || cat.slug;
+  if(lang === "en") return cat.name_en || cat.name_zh_tw || cat.name_zh_cn || cat.name || cat.slug;
+  return cat.name_zh_tw || cat.name_zh_cn || cat.name_en || cat.name || cat.slug;
+}
+
 // 將分類名稱轉成 slug
 function slugify(name){
   return String(name || "")
@@ -216,7 +230,7 @@ function renderCategorySelect(){
   }
 
   optCategory.innerHTML = categories.map(cat => `
-    <option value="${esc(cat.slug)}">${esc(cat.name)}</option>
+    <option value="${esc(cat.slug)}">${esc(getCategoryDisplayName(cat))}</option>
   `).join("");
 
   const exists = categories.some(cat => cat.slug === savedCategory);
@@ -256,7 +270,7 @@ function renderCategoryManageList(){
     return `
       <div class="category-manage-item" data-slug="${esc(cat.slug)}">
         <div>
-          <div class="category-manage-name">${esc(cat.name_zh_tw || cat.name || cat.slug)}</div>
+          <div class="category-manage-name">${esc(getCategoryDisplayName(cat))}</div>
           <div class="category-manage-sub">
             简：${esc(cat.name_zh_cn || cat.name || cat.slug)} ｜ EN：${esc(cat.name_en || cat.name || cat.slug)}
           </div>
