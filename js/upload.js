@@ -42,6 +42,7 @@ const btnReset = document.getElementById("btnReset");
 // state
 let items = [];
 let categories = []; // [{id, slug, name, sort, is_active}]
+let editingCategoryId = null;
 
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 function toNum(v, fallback){ const n = Number(v); return Number.isFinite(n) ? n : fallback; }
@@ -230,19 +231,48 @@ function renderCategoryManageList(){
     return;
   }
 
-  categoryManageList.innerHTML = categories.map(cat => `
-    <div class="category-manage-item" data-slug="${esc(cat.slug)}">
-      <div class="category-manage-name">${esc(cat.name)}</div>
-      <div class="category-manage-meta">${esc(cat.slug)}</div>
-      <div class="category-manage-actions">
-        ${USER_ROLE === "admin" ? `
-          <button class="mini-btn danger" data-act="deleteCategory" data-id="${cat.id}" data-slug="${esc(cat.slug)}" type="button">
-            刪除
-          </button>
-        ` : ""}
+  categoryManageList.innerHTML = categories.map(cat => {
+    const isEditing = editingCategoryId === cat.id;
+
+    if(isEditing){
+      return `
+        <div class="category-manage-item editing" data-slug="${esc(cat.slug)}">
+          <div class="category-edit-grid">
+            <input class="param-input edit-cat-tw" data-id="${cat.id}" value="${esc(cat.name_zh_tw || "")}" placeholder="繁體名稱" />
+            <input class="param-input edit-cat-cn" data-id="${cat.id}" value="${esc(cat.name_zh_cn || "")}" placeholder="简体名称" />
+            <input class="param-input edit-cat-en" data-id="${cat.id}" value="${esc(cat.name_en || "")}" placeholder="English name" />
+          </div>
+
+          <div class="category-manage-meta">${esc(cat.slug)}</div>
+
+          <div class="category-manage-actions">
+            <button class="mini-btn" data-act="saveCategory" data-id="${cat.id}" type="button">保存</button>
+            <button class="mini-btn" data-act="cancelEditCategory" data-id="${cat.id}" type="button">取消</button>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="category-manage-item" data-slug="${esc(cat.slug)}">
+        <div>
+          <div class="category-manage-name">${esc(cat.name_zh_tw || cat.name || cat.slug)}</div>
+          <div class="category-manage-sub">
+            简：${esc(cat.name_zh_cn || cat.name || cat.slug)} ｜ EN：${esc(cat.name_en || cat.name || cat.slug)}
+          </div>
+        </div>
+
+        <div class="category-manage-meta">${esc(cat.slug)}</div>
+
+        <div class="category-manage-actions">
+          ${USER_ROLE === "admin" ? `
+            <button class="mini-btn" data-act="editCategory" data-id="${cat.id}" type="button">編輯</button>
+            <button class="mini-btn danger" data-act="deleteCategory" data-id="${cat.id}" data-slug="${esc(cat.slug)}" type="button">刪除</button>
+          ` : ""}
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 async function refreshCategories(){
@@ -337,6 +367,21 @@ async function deleteCategoryById(id, slug){
   toast("已刪除分類");
 }
 
+async function updateCategoryById(id, payload){
+  const { error } = await supabase
+    .from("categories")
+    .update(payload)
+    .eq("id", id);
+
+  if(error){
+    console.error(error);
+    toast("更新分類失敗");
+    return false;
+  }
+
+  return true;
+}
+
 btnAddCategory?.addEventListener("click", addCategory);
 newCategoryName?.addEventListener("keydown", (e) => {
   if(e.key === "Enter"){
@@ -346,21 +391,64 @@ newCategoryName?.addEventListener("keydown", (e) => {
 });
 
 categoryManageList?.addEventListener("click", async (e) => {
-  const btn = e.target.closest("button[data-act='deleteCategory']");
+  const btn = e.target.closest("button");
   if(!btn) return;
 
+  const act = btn.dataset.act;
+  const id = btn.dataset.id;
+
   if(USER_ROLE !== "admin"){
-    toast("只有 admin 可以刪除分類");
+    toast("只有 admin 可以管理分類");
     return;
   }
 
-  const id = btn.dataset.id;
-  const slug = btn.dataset.slug;
+  if(act === "editCategory"){
+    editingCategoryId = id;
+    renderCategoryManageList();
+    return;
+  }
 
-  if(!id || !slug) return;
-  if(!confirm("確定要刪除這個分類？如果這個分類底下還有圖片，系統會阻止刪除。")) return;
+  if(act === "cancelEditCategory"){
+    editingCategoryId = null;
+    renderCategoryManageList();
+    return;
+  }
 
-  await deleteCategoryById(id, slug);
+  if(act === "saveCategory"){
+    const tw = categoryManageList.querySelector(`.edit-cat-tw[data-id="${id}"]`)?.value.trim() || "";
+    const cn = categoryManageList.querySelector(`.edit-cat-cn[data-id="${id}"]`)?.value.trim() || "";
+    const en = categoryManageList.querySelector(`.edit-cat-en[data-id="${id}"]`)?.value.trim() || "";
+
+    if(!tw && !cn && !en){
+      toast("請至少保留一種語言名稱");
+      return;
+    }
+
+    const baseName = tw || cn || en;
+
+    const ok = await updateCategoryById(id, {
+      name: baseName,
+      name_zh_tw: tw || baseName,
+      name_zh_cn: cn || baseName,
+      name_en: en || baseName
+    });
+
+    if(!ok) return;
+
+    editingCategoryId = null;
+    await refreshCategories();
+    toast("分類已更新");
+    return;
+  }
+
+  if(act === "deleteCategory"){
+    const slug = btn.dataset.slug;
+    if(!id || !slug) return;
+    if(!confirm("確定要刪除這個分類？如果這個分類底下還有圖片，系統會阻止刪除。")) return;
+
+    await deleteCategoryById(id, slug);
+    return;
+  }
 });
 
 /* =========================
